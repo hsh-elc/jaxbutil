@@ -52,6 +52,7 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
+              --target master \
               "${RUNNER_TEMP}/dist/*"
           else
             THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}"
@@ -60,5 +61,6 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
+              --target "${{ github.ref_name }}" \
               "${RUNNER_TEMP}/dist/*"
           fi
