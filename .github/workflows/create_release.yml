@@ -1,27 +1,41 @@
+name: Create Release
+
 on:
   push:
     branches:
       - 'develop'
       - 'master'
 
-name: Create Release
+permissions:
+  contents: write
 
 jobs:
   build:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Create Release
-        id: create_release
-        uses: comnoco/create-release-action@v2
+      - name: Create release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            New release
-          draft: true
-          prerelease: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+              --draft --prerelease \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
+              
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Create Release
+#        id: create_release
+#        uses: comnoco/create-release-action@v2
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: Release ${{ github.ref }}
+#          body: |
+#            New release
+#          draft: true
+#          prerelease: true
