@@ -50,10 +50,9 @@ jobs:
           if [[ "$BRANCH" == "master" ]]; then
             THE_TAG=${{ env.RELEASE_VERSION }}
             gh release create "$THE_TAG" \
+              --verify-tag \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
-              --generate-notes \
-              --verify-tag \
               "${RUNNER_TEMP}/dist/*"
           else
             THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}-${STAMP}"
@@ -61,6 +60,5 @@ jobs:
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
-              --generate-notes \
               "${RUNNER_TEMP}/dist/*"
           fi
