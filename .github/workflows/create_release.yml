@@ -37,32 +37,23 @@ jobs:
         run: |
           mkdir "${RUNNER_TEMP}/dist"
           cp pom.xml "${RUNNER_TEMP}/dist/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
-          echo "pwd:"
-          pwd
-          echo "ls ${RUNNER_TEMP}/dist:"
-          ls "${RUNNER_TEMP}/dist"
-          echo "ls:"
-          ls
-          echo "ls target:"
-          ls target
-          echo "cp:"
           cp "target/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.jar" "${RUNNER_TEMP}/dist"
 
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
         run: |
-          gh release create "$tag" \
+          # Get branch name and repace special chars into "-"
+          BRANCH=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g')
+          echo "-current branch: '${BRANCH}'"
+          if [[ "$BRANCH" == "master" ]]; then
+            THE_TAG=${{ env.RELEASE_VERSION }}
+          else
+            THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}"
+          fi
+          gh release create "${THE_TAG}" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}" \
               --generate-notes \
               "${RUNNER_TEMP}/dist/*"
-
-#      - name: Upload files
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          tag: ${{ github.ref_name }}
-#        run: |
-#          gh release upload "$tag" --clobber "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
