@@ -37,10 +37,15 @@ jobs:
         run: |
           mkdir "${RUNNER_TEMP}/dist"
           cp pom.xml "${RUNNER_TEMP}/dist/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
+          echo "pwd:"
           pwd
+          echo "ls ${RUNNER_TEMP}/dist:"
           ls "${RUNNER_TEMP}/dist"
+          echo "ls:"
           ls
+          echo "ls target:"
           ls target
+          echo "cp:"
           cp "target/*-${{ env.RELEASE_VERSION }}.jar" "${RUNNER_TEMP}/dist"
 
       - name: Create release
