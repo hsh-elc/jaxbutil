@@ -35,7 +35,7 @@ jobs:
 
       - name: Provide pom
         run: |
-          cp pom.xml "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}.pom"
+          cp pom.xml "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
 
       - name: Create release
         env:
@@ -53,6 +53,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          gh release delete-asset "$tag" -y "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
-          gh release delete-asset "$tag" -y "target/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.jar"
-          gh release upload "$tag" "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
+          gh release upload "$tag" --clobber "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
