@@ -51,9 +51,9 @@ jobs:
           else
             THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}"
           fi
-          gh release create "${THE_TAG}" \
+          gh release create "$THE_TAG" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}" \
+              --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
               "${RUNNER_TEMP}/dist/*"
