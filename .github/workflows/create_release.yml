@@ -1,11 +1,11 @@
 name: Create Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'develop'
       - 'master'
-  workflow_dispatch:
   
 permissions:
   contents: write
@@ -33,9 +33,11 @@ jobs:
         run: |
           mvn --batch-mode --update-snapshots --also-make clean package
 
-      - name: Provide pom
+      - name: Provide files
         run: |
-          cp pom.xml "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
+          mkdir "${RUNNER_TEMP}/dist"
+          cp pom.xml "${RUNNER_TEMP}/dist/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
+          cp target/*-{{ env.RELEASE_VERSION }}.jar "${RUNNER_TEMP}/dist"
 
       - name: Create release
         env:
@@ -46,11 +48,12 @@ jobs:
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}" \
-              --generate-notes
+              --generate-notes \
+              "${RUNNER_TEMP}/dist/*"
 
-      - name: Upload files
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        run: |
-          gh release upload "$tag" --clobber "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
+#      - name: Upload files
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          tag: ${{ github.ref_name }}
+#        run: |
+#          gh release upload "$tag" --clobber "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
