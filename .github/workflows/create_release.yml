@@ -45,6 +45,7 @@ jobs:
         run: |
           # Get branch name and repace special chars into "-"
           BRANCH=$(echo ${{ github.ref_name }} | sed 's/[^a-zA-Z0-9]/-/g')
+          STAMP=$(date +%0Y%0m%0d-%0H%0M%0S)
           echo "-current branch: '${BRANCH}'"
           if [[ "$BRANCH" == "master" ]]; then
             THE_TAG=${{ env.RELEASE_VERSION }}
@@ -52,15 +53,14 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
-              --target master \
+              --verify-tag \
               "${RUNNER_TEMP}/dist/*"
           else
-            THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}"
+            THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}-${STAMP}"
             gh release create "$THE_TAG" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
-              --target "${{ github.ref_name }}" \
               "${RUNNER_TEMP}/dist/*"
           fi
