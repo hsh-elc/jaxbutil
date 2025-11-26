@@ -53,4 +53,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          gh release upload "$tag" "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}.pom" target/*.jar
+          gh release delete-asset "$tag" -y "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom"
+          gh release delete-asset "$tag" -y "target/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.jar"
+          gh release upload "$tag" "${RUNNER_TEMP}/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.pom" target/*.jar
