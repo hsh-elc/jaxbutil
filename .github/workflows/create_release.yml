@@ -48,12 +48,17 @@ jobs:
           echo "-current branch: '${BRANCH}'"
           if [[ "$BRANCH" == "master" ]]; then
             THE_TAG=${{ env.RELEASE_VERSION }}
+            gh release create "$THE_TAG" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
+              --generate-notes \
+              "${RUNNER_TEMP}/dist/*"
           else
             THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}"
-          fi
-          gh release create "$THE_TAG" \
+            gh release create "$THE_TAG" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               --generate-notes \
               "${RUNNER_TEMP}/dist/*"
+          fi
