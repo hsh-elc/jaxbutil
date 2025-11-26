@@ -46,7 +46,7 @@ jobs:
           echo "ls target:"
           ls target
           echo "cp:"
-          cp "target/*-${{ env.RELEASE_VERSION }}.jar" "${RUNNER_TEMP}/dist"
+          cp "target/${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}.jar" "${RUNNER_TEMP}/dist"
 
       - name: Create release
         env:
