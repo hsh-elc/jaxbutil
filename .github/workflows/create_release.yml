@@ -33,6 +33,10 @@ jobs:
         run: |
           mvn --batch-mode --update-snapshots --also-make clean package
 
+      - name: Provide pom
+        run: |
+          cp pom.xml "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}.pom"
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,4 +53,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          gh release upload "$tag" pom.xml target/*.jar
+          gh release upload "$tag" "$RUNNER_TEMP/${GITHUB_REPOSITORY#*/}.pom" target/*.jar
