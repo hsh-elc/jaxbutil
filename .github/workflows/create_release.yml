@@ -48,15 +48,15 @@ jobs:
           STAMP=$(TZ=Europe/Berlin date +%0Y%0m%0d-%0H%0M%0S)
           echo "-current branch: '${BRANCH}'"
           if [[ "$BRANCH" == "master" ]]; then
-            THE_TAG=${{ env.RELEASE_VERSION }}
-            gh release create "$THE_TAG" \
+            THE_TAG="${{ env.RELEASE_VERSION }}"
+            gh release create "v$THE_TAG" \
               --verify-tag \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
               "${RUNNER_TEMP}/dist/*"
           else
             THE_TAG="${{ env.RELEASE_VERSION }}-${BRANCH}-${STAMP}"
-            gh release create "$THE_TAG" \
+            gh release create "v$THE_TAG" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/}-$THE_TAG" \
