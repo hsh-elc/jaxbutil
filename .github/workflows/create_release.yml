@@ -41,7 +41,7 @@ jobs:
           gh release create "$tag" \
               --draft --prerelease \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --title="${GITHUB_REPOSITORY#*/}-${{ env.RELEASE_VERSION }}" \
               --generate-notes
 
       - name: Upload files
